@@ -30,16 +30,37 @@ Creator
 ## Quick Start
 
 ```bash
-# Build
-cargo build --release --target wasm32-unknown-unknown
-
-# Test
-cargo test
-
-# Format & Lint
-cargo fmt --all -- --check
-cargo clippy -- -D warnings
+make build
+make test
+make wasm
 ```
+
+The Makefile requires GNU Make and Rust with Cargo. Install the WASM target
+before building the contract:
+
+```bash
+rustup target add wasm32-unknown-unknown
+```
+
+Coverage and dependency audits use optional Cargo extensions:
+
+```bash
+cargo install cargo-llvm-cov cargo-audit
+```
+
+| Target | Command | Purpose |
+|--------|---------|---------|
+| `build` | `make build` | Build every workspace package in debug mode |
+| `test` | `make test` | Run all workspace tests |
+| `fmt` | `make fmt` | Check Rust formatting without changing files |
+| `lint` | `make lint` | Run Clippy for all targets and fail on warnings |
+| `clean` | `make clean` | Remove Cargo build artifacts |
+| `wasm` | `make wasm` | Build the `vesting` contract as optimized WASM |
+| `coverage` | `make coverage` | Generate workspace coverage with `cargo-llvm-cov` |
+| `audit` | `make audit` | Check dependencies with `cargo-audit` |
+
+Override `CARGO`, `CONTRACT_PACKAGE`, or `WASM_TARGET` when a toolchain or
+contract uses a different executable, package, or compilation target.
 
 ## Contract API
 
