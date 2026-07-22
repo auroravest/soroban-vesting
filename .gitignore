@@ -1,0 +1,5 @@
+/target
+**/test_snapshots/
+.env
+*.wasm
+Cargo.lock
