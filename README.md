@@ -52,6 +52,10 @@ cargo clippy -- -D warnings
 | `get_vesting(vesting_id)` | Public | View vesting details |
 | `get_claimable(vesting_id)` | Public | Calculate claimable amount |
 
+## Documentation
+
+- [On-chain event schema](docs/event-schema.md) for indexers and relayers
+
 ## Security
 
 - All state-changing functions require authorization
