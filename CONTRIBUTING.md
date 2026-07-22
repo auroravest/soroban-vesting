@@ -16,6 +16,27 @@
 - Soroban SDK 22.x
 - WASM target: `rustup target add wasm32-unknown-unknown`
 
+### Pre-commit Checks
+
+Install [pre-commit](https://pre-commit.com/) and enable the repository hooks:
+
+```bash
+pre-commit install
+```
+
+The hooks run `cargo fmt --all -- --check` and workspace-wide Clippy whenever a
+commit includes Rust files. Run both hooks against the whole repository at any
+time with:
+
+```bash
+pre-commit run --all-files
+```
+
+To skip one hook for an exceptional commit, set `SKIP=cargo-fmt` or
+`SKIP=cargo-clippy` for that `git commit` command. `git commit --no-verify`
+skips all hooks. Any skipped check must still pass before opening a pull
+request.
+
 ## Issue Labels
 
 | Label | Description |

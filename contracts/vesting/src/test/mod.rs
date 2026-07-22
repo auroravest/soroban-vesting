@@ -17,7 +17,9 @@ fn setup() -> (Env, Address, TokenVestingClient<'static>) {
     let contract_id = env.register(TokenVesting, ());
     let client = TokenVestingClient::new(&env, &contract_id);
     let admin = Address::generate(&env);
-    let token = env.register_stellar_asset_contract_v2(admin.clone()).address();
+    let token = env
+        .register_stellar_asset_contract_v2(admin.clone())
+        .address();
     client.initialize(&admin, &token);
     (env, contract_id, client)
 }
@@ -29,7 +31,9 @@ fn test_initialize() {
     let contract_id = env.register(TokenVesting, ());
     let client = TokenVestingClient::new(&env, &contract_id);
     let admin = Address::generate(&env);
-    let token = env.register_stellar_asset_contract_v2(admin.clone()).address();
+    let token = env
+        .register_stellar_asset_contract_v2(admin.clone())
+        .address();
 
     client.initialize(&admin, &token);
     assert_eq!(client.get_vesting_count(), 0);
@@ -43,7 +47,9 @@ fn test_initialize_twice_panics() {
     let contract_id = env.register(TokenVesting, ());
     let client = TokenVestingClient::new(&env, &contract_id);
     let admin = Address::generate(&env);
-    let token = env.register_stellar_asset_contract_v2(admin.clone()).address();
+    let token = env
+        .register_stellar_asset_contract_v2(admin.clone())
+        .address();
 
     client.initialize(&admin, &token);
     client.initialize(&admin, &token);
