@@ -4,11 +4,11 @@
 //! Supports multiple vesting schedules per contract, revocable by creator.
 
 #![no_std]
+extern crate alloc;
 #[cfg(test)]
 extern crate std;
-extern crate alloc;
 
-use soroban_sdk::{contract, contractimpl, contracttype, symbol_short, token, Address, Env, Symbol, Vec};
+use soroban_sdk::{contract, contractimpl, contracttype, token, Address, Env, Symbol};
 
 // --- Storage keys ---
 
@@ -111,7 +111,11 @@ impl TokenVesting {
         token_client.transfer(&creator, &env.current_contract_address(), &amount);
 
         // Get next vesting ID
-        let mut count: u64 = env.storage().instance().get(&DataKey::VestingCount).unwrap();
+        let mut count: u64 = env
+            .storage()
+            .instance()
+            .get(&DataKey::VestingCount)
+            .unwrap();
         let id = count;
         count = count.checked_add(1).expect("overflow");
         env.storage().instance().set(&DataKey::VestingCount, &count);
@@ -128,10 +132,13 @@ impl TokenVesting {
             end_time,
         };
 
-        env.storage().persistent().set(&DataKey::Vesting(id), &schedule);
+        env.storage()
+            .persistent()
+            .set(&DataKey::Vesting(id), &schedule);
 
         let topics = (Symbol::new(&env, "create_vesting"), creator);
-        env.events().publish(topics, (id, beneficiary, amount, cliff_time, end_time));
+        env.events()
+            .publish(topics, (id, beneficiary, amount, cliff_time, end_time));
 
         id
     }
@@ -206,9 +213,7 @@ impl TokenVesting {
             .total_amount
             .checked_sub(vested)
             .expect("underflow");
-        let unclaimed = remaining
-            .checked_sub(schedule.claimed_amount)
-            .unwrap_or(0);
+        let unclaimed = remaining.checked_sub(schedule.claimed_amount).unwrap_or(0);
 
         env.storage()
             .persistent()
