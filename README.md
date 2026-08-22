@@ -52,6 +52,9 @@ cargo clippy -- -D warnings
 | `get_vesting(vesting_id)` | Public | View vesting details |
 | `get_claimable(vesting_id)` | Public | Calculate claimable amount |
 
+For plain-language answers about keys, vesting timing, calculations, and
+revocation, see the [Vesting FAQ](docs/faq.md).
+
 ## Security
 
 - All state-changing functions require authorization
