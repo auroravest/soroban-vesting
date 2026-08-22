@@ -89,3 +89,38 @@ fn test_create_vesting_zero_amount_panics() {
     let beneficiary = Address::generate(&env);
     client.create_vesting(&creator, &beneficiary, &0, &500, &2_000);
 }
+
+#[test]
+fn test_partial_claims_accumulate_to_total_amount() {
+    let (env, contract_id, client) = setup();
+    let creator = Address::generate(&env);
+    let beneficiary = Address::generate(&env);
+    let token_addr: Address = env.as_contract(&contract_id, || {
+        env.storage().instance().get(&DataKey::Token).unwrap()
+    });
+    let token_admin = soroban_sdk::token::StellarAssetClient::new(&env, &token_addr);
+    let token_client = soroban_sdk::token::Client::new(&env, &token_addr);
+
+    token_admin.mint(&creator, &1_000);
+    set_ledger_time(&env, 1_000);
+    let id = client.create_vesting(&creator, &beneficiary, &1_000, &0, &1_000);
+
+    for step in 1_u64..=10 {
+        set_ledger_time(&env, 1_000 + step * 100);
+
+        assert_eq!(client.claim(&beneficiary, &id), 100);
+
+        let expected_claimed = i128::from(step) * 100;
+        let info = client.get_vesting(&id);
+        assert_eq!(info.schedule.claimed_amount, expected_claimed);
+        assert_eq!(info.vested, expected_claimed);
+        assert_eq!(info.claimable, 0);
+        assert_eq!(token_client.balance(&beneficiary), expected_claimed);
+        assert_eq!(token_client.balance(&contract_id), 1_000 - expected_claimed);
+    }
+
+    let final_info = client.get_vesting(&id);
+    assert_eq!(final_info.schedule.claimed_amount, 1_000);
+    assert_eq!(final_info.vested, 1_000);
+    assert_eq!(final_info.claimable, 0);
+}
